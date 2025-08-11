@@ -1,0 +1,113 @@
+
+   <!DOCTYPE html>
+<html lang='en' translate="no">
+    <head>
+        <meta charset="UTF-8">
+        <title>raymarched fire</title>
+        <style>
+            body {
+                margin: 0;
+                padding: 0;
+                overflow: hidden;
+            }
+        </style>
+    </head> <script type="importmap">
+        {
+            "imports": {
+                "three": "https://threejs.org/build/three.module.js",
+                "three/addons/": "https://threejs.org/examples/jsm/"
+            }
+        }</script>
+    <body>
+        <script type='module'>
+import*as THREE from 'three'
+import {OrbitControls} from "three/addons/controls/OrbitControls.js"
+
+const renderer = new THREE.WebGLRenderer({
+    antialias: false
+});
+renderer.toneMapping = THREE.NeutralToneMapping;
+//ReinhardToneMapping;
+renderer.setPixelRatio(window.devicePixelRatio);
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.autoClear = true;
+renderer.setClearColor('#000', 1);
+document.body.appendChild(renderer.domElement);
+const gl = renderer.getContext()
+
+const scene = new THREE.Scene();
+
+const width = window.innerWidth;
+const height = window.innerHeight;
+const camera = new THREE.PerspectiveCamera(45,width / height,0.01,200);
+
+camera.position.set(-1.3, 1.27, 1.9)
+camera.lookAt(0, 0, 0);
+
+const controls = new OrbitControls(camera,renderer.domElement);
+// controls.maxPolarAngle = Math.PI * 0.5;
+controls.minDistance = 0.01;
+controls.maxDistance = 100;
+controls.enableDamping = true;
+controls.enableZoom = false;
+
+let targetZoom = controls.target.distanceTo(camera.position);
+let zoom = targetZoom;
+document.addEventListener('wheel', e => {
+    if(e.target===renderer.domElement)
+        targetZoom += e.deltaY * .001;
+}
+)
+let updateZoom = () => {
+    zoom += (targetZoom - zoom) * .05;
+    targetZoom = Math.max(.2, Math.min(10., targetZoom));
+    camera.position.sub(controls.target).setLength(zoom).add(controls.target);
+
+}
+
+let pointLight = new THREE.PointLight('white',1.);
+scene.add(camera)
+
+let handleResize = () => {
+    camera.aspect = window.innerWidth / window.innerHeight
+    camera.updateProjectionMatrix()
+    renderer.setSize(window.innerWidth, window.innerHeight)
+}
+handleResize();
+window.addEventListener('resize', handleResize, false)
+
+
+
+//scene.add(new THREE.AxesHelper())
+
+function animate() {
+    updateZoom();
+    controls.update()
+    renderer.render(scene, camera)
+    requestAnimationFrame(animate)
+}
+animate()
+
+
+//GUI
+
+import GUI from "three/addons/libs/lil-gui.module.min.js"
+const gui = new GUI(renderer.domElement.parentElement).title('settings')
+gui.close();
+
+
+
+import fireBox from "./fire.js"
+scene.add(fireBox)
+let greyTex = new THREE.TextureLoader().load('./Fire-grayscale.png');
+let u = fireBox.material.uniforms;
+gui.add(u.fireTex, 'value',{fire:u.fireTex.value,grey:greyTex}).name('fire texture');
+gui.addColor(u.color,'value').name('Tint')
+gui.add(u.seed,'value',0,20).name('Seed')
+gui.add(u.magnitude,'value',0,5 ).name('Magnitude')
+gui.add(u.lacunarity,'value',0,5 ).name('Lacunarity')
+gui.add(u.gain, 'value', 0,5 ).name('Gain')
+
+</script>
+</body>
+</html>
