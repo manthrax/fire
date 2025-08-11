@@ -1,6 +1,6 @@
 import*as THREE from "three"
 
-let fireTex = new THREE.TextureLoader().load('./fire.png');
+let fireTex = new THREE.TextureLoader().load('./Fire.png');
 fireTex.magFilter = fireTex.minFilter = THREE.LinearFilter
 fireTex.wrapS = fireTex.wrapT = THREE.ClampToEdgeWrapping
 
