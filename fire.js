@@ -8,10 +8,10 @@ let fireMaterial = new THREE.ShaderMaterial({
   defines: {
     ITERATIONS: '20',
     OCTAVES: '3',
-  }, 
+  },
     transparent: true,
-      depthWrite: false,
-      depthTest: false,
+    depthWrite: false,
+    depthTest: false,
     uniforms:  {
         fireTex: { value: fireTex },//Texture | null },//** Fire texture (grayscale mask)
         color: { value: new THREE.Color(0xeeeeee)},//Color }Fire color tint */
@@ -183,7 +183,7 @@ let fireMaterial = new THREE.ShaderMaterial({
 `
 });
 
-let fireBox = new THREE.Mesh(new THREE.BoxGeometry(),fireMaterial);
+let fireBox = new THREE.Mesh(new THREE.SphereGeometry(),fireMaterial);
 fireBox.onBeforeRender=function(){
     this.material.uniforms.time.value = performance.now()/1000;
     this.updateMatrixWorld()

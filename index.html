@@ -65,20 +65,14 @@ let updateZoom = () => {
 
 }
 
-let pointLight = new THREE.PointLight('white',1.);
-scene.add(camera)
-
 let handleResize = () => {
     camera.aspect = window.innerWidth / window.innerHeight
     camera.updateProjectionMatrix()
     renderer.setSize(window.innerWidth, window.innerHeight)
 }
+            
 handleResize();
 window.addEventListener('resize', handleResize, false)
-
-
-
-//scene.add(new THREE.AxesHelper())
 
 function animate() {
     updateZoom();
@@ -88,19 +82,16 @@ function animate() {
 }
 animate()
 
-
 //GUI
 
 import GUI from "three/addons/libs/lil-gui.module.min.js"
 const gui = new GUI(renderer.domElement.parentElement).title('settings')
 gui.close();
 
-
-
 import fireBox from "./fire.js"
 scene.add(fireBox)
 let greyTex = new THREE.TextureLoader().load('./Fire-grayscale.png');
-let u = fireBox.material.uniforms;
+let u = fireBox.material.uniforms
 gui.add(u.fireTex, 'value',{fire:u.fireTex.value,grey:greyTex}).name('fire texture');
 gui.addColor(u.color,'value').name('Tint')
 gui.add(u.seed,'value',0,20).name('Seed')
